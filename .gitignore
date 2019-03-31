@@ -28,3 +28,6 @@
 
 # Apple-specific garbage files.
 .AppleDouble
+
+**/.vs/**
+**/.vscode/**

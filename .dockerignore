@@ -1,0 +1,11 @@
+**
+!trunk/auto/**
+!trunk/etc/**
+!trunk/ide/**
+!trunk/modules/**
+!trunk/research/**
+!trunk/scripts/**
+!trunk/src/**
+!trunk/configure
+!trunk/3rdparty/**
+!srs.conf

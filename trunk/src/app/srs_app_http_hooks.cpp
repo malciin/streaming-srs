@@ -59,36 +59,39 @@ SrsHttpHooks::~SrsHttpHooks()
 
 int SrsHttpHooks::on_connect(string url, SrsRequest* req)
 {
-    int ret = ERROR_SUCCESS;
-    
     int client_id = _srs_context->get_id();
+
+	std::stringstream ss;
+	ss << SRS_JOBJECT_START
+		<< SRS_JFIELD_STR("action", "on_connect") << SRS_JFIELD_CONT
+		<< SRS_JFIELD_ORG("client_id", client_id) << SRS_JFIELD_CONT
+		<< SRS_JFIELD_STR("ip", req->ip) << SRS_JFIELD_CONT
+		<< SRS_JFIELD_STR("vhost", req->vhost) << SRS_JFIELD_CONT
+		<< SRS_JFIELD_STR("app", req->app) << SRS_JFIELD_CONT
+		<< SRS_JFIELD_STR("tcUrl", req->tcUrl) << SRS_JFIELD_CONT
+		<< SRS_JFIELD_STR("pageUrl", req->pageUrl) << SRS_JFIELD_CONT
+		<< SRS_JFIELD_STR("stream_key", req->stream)
+		<< SRS_JOBJECT_END;
+
+	std::string data = ss.str();
+	std::string res;
+	int status_code;
+
+	int ret = do_post(url, data, status_code, res);
+	if (status_code != 200) {
+		srs_error("http post on_connect uri failed. "
+			"client_id=%d, url=%s, request=%s, response=%s, code=%d, ret=%d",
+			client_id, url.c_str(), data.c_str(), res.c_str(), status_code, ret);
+		return ret;
+	}
+
+	req->stream = res.c_str();
     
-    std::stringstream ss;
-    ss << SRS_JOBJECT_START
-        << SRS_JFIELD_STR("action", "on_connect") << SRS_JFIELD_CONT
-        << SRS_JFIELD_ORG("client_id", client_id) << SRS_JFIELD_CONT
-        << SRS_JFIELD_STR("ip", req->ip) << SRS_JFIELD_CONT
-        << SRS_JFIELD_STR("vhost", req->vhost) << SRS_JFIELD_CONT
-        << SRS_JFIELD_STR("app", req->app) << SRS_JFIELD_CONT
-        << SRS_JFIELD_STR("tcUrl", req->tcUrl) << SRS_JFIELD_CONT
-        << SRS_JFIELD_STR("pageUrl", req->pageUrl)
-        << SRS_JOBJECT_END;
-        
-    std::string data = ss.str();
-    std::string res;
-    int status_code;
-    if ((ret = do_post(url, data, status_code, res)) != ERROR_SUCCESS) {
-        srs_error("http post on_connect uri failed. "
-            "client_id=%d, url=%s, request=%s, response=%s, code=%d, ret=%d",
-            client_id, url.c_str(), data.c_str(), res.c_str(), status_code, ret);
-        return ret;
-    }
-    
-    srs_trace("http hook on_connect success. "
+	srs_trace("http hook on_connect success. "
         "client_id=%d, url=%s, request=%s, response=%s, ret=%d",
         client_id, url.c_str(), data.c_str(), res.c_str(), ret);
     
-    return ret;
+    return ERROR_SUCCESS;
 }
 
 void SrsHttpHooks::on_close(string url, SrsRequest* req, int64_t send_bytes, int64_t recv_bytes)

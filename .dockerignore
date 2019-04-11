@@ -9,3 +9,4 @@
 !trunk/configure
 !trunk/3rdparty/**
 !srs.conf
+!nginx.conf

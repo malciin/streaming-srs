@@ -39,6 +39,7 @@ using namespace std;
 #include <srs_kernel_utility.hpp>
 #include <srs_app_http_conn.hpp>
 #include <srs_app_utility.hpp>
+#include <cstdlib>
 
 #define SRS_HTTP_RESPONSE_OK    SRS_XSTR(ERROR_SUCCESS)
 
@@ -70,7 +71,8 @@ int SrsHttpHooks::on_connect(string url, SrsRequest* req)
 		<< SRS_JFIELD_STR("app", req->app) << SRS_JFIELD_CONT
 		<< SRS_JFIELD_STR("tcUrl", req->tcUrl) << SRS_JFIELD_CONT
 		<< SRS_JFIELD_STR("pageUrl", req->pageUrl) << SRS_JFIELD_CONT
-		<< SRS_JFIELD_STR("stream_key", req->stream)
+		<< SRS_JFIELD_STR("stream_key", req->stream) << SRS_JFIELD_CONT
+        << SRS_JFIELD_STR("httpUrl", getenv("HTTP_URL"))
 		<< SRS_JOBJECT_END;
 
 	std::string data = ss.str();

@@ -537,12 +537,20 @@ int SrsHlsMuxer::segment_open(int64_t segment_start_dts)
     current->uri += hls_entry_prefix;
     if (!hls_entry_prefix.empty() && !srs_string_ends_with(hls_entry_prefix, "/")) {
         current->uri += "/";
-        
+        // @malciin:
+        // Not sure what is the purpose of below lines - its returns a wrong
+        // urls when we add hls prefix - it include also prefix from m3u8 file then
+        // so I temporary comment below lines
+        // Without commenting below lines the urls looks like this:
+        // http://localhost:8084/guid.m3u8/guid_timestamp.ts when it should looks
+        // http://localhost:8084/guid_timestamp.ts
+        // -------------
+        //
         // add the http dir to uri.
-        string http_dir = srs_path_dirname(m3u8_url);
-        if (!http_dir.empty()) {
-            current->uri += http_dir + "/";
-        }
+        // string http_dir = srs_path_dirname(m3u8_url);
+        // if (!http_dir.empty()) {
+        //     current->uri += http_dir + "/";
+        // }
     }
     current->uri += ts_url;
     
